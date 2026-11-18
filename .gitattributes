@@ -1,0 +1,3 @@
+# eval_set_sha hashes raw bytes: keep generated eval sets byte-identical on Windows and CI
+src/data/eval/eval_set_v*.jsonl -text
+src/data/eval/labels_v*.json -text
