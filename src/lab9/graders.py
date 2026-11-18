@@ -90,6 +90,19 @@ class DbFactKept(Evaluator[Any, Trial]):
         return EvaluationReason(value=not bad, reason=f"{len(bad)} override event(s)" if bad else None)
 
 
+@dataclass
+class QuoteKept(Evaluator[Any, Trial]):
+    """Step level (FM-04 / FM-05). Fails when the agent rewrites the amount compute_compensation quoted
+    (summing clauses, rounding, deducting a prior refund the host deducts again). Catches a self-deduction
+    to 0 that leaves the ledger and reply looking correct."""
+
+    def evaluate(self, ctx: EvaluatorContext[Any, Trial]) -> EvaluationReason:
+        quoted = [e["payload"].get("amount_vnd") for e in ctx.output["events"] if e.get("kind") == "quote"]
+        proposed = [e["payload"].get("amount_vnd") for e in ctx.output["events"] if e.get("kind") == "proposal"]
+        bad = [p for p in proposed if quoted and p != quoted[-1]]
+        return EvaluationReason(value=not bad, reason=f"quote {quoted[-1]} rewritten to {bad}" if bad else None)
+
+
 # Order matters only for display. Names here are the metric ids in config/metric_spec.yaml.
 GRADERS: dict[str, type[Evaluator]] = {
     "pass_rate": TrialPass,
@@ -98,4 +111,5 @@ GRADERS: dict[str, type[Evaluator]] = {
     "refund_amount_correct": RefundAmountCorrect,
     "db_fact_kept": DbFactKept,
     "reply_matches_ledger": ReplyMatchesLedger,
+    "quote_kept": QuoteKept,
 }

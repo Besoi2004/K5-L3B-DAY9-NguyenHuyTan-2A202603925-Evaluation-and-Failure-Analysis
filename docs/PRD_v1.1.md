@@ -22,6 +22,7 @@
 | refund_amount_correct | năng lực | ≥ 0.95 và không giảm có ý nghĩa | có | 0.9857 |
 | pass_rate | năng lực | ≥ 0.85 và không giảm có ý nghĩa | có | 0.9857 |
 | db_fact_kept | năng lực (mức bước) | ≥ 0.95 | không (cảnh báo) | 0.9857 |
+| quote_kept | năng lực (mức bước) | ≥ 0.95 (agent không được sửa số tiền tool đã tính) | không (cảnh báo) | 1.0 |
 | pass_5, cost_per_success | theo dõi | pass_5 ≥ 0.80; cost tăng ≤ 10% | không | 0.9286; 49.567 |
 | reply_matches_ledger (FM-08) | năng lực | = 1.0 (mọi số tiền trong reply bằng ledger) | có | 1.0 |
 
@@ -53,7 +54,7 @@ Quy tắc: tiền và phê duyệt luôn chấm bằng code. Judge chỉ dùng c
 - [ ] 14 item: CI rộng, chỉ bắt được hồi quy lớn. Một lỗi chỉ xảy ra ở một nhóm nhỏ claim có thể lọt qua trung bình.
 - [ ] Judge replay trên CSV đã công khai, chưa có tập held-out mới; nhãn người cũng có sai (H-081).
 - [ ] FM-09 (lẫn dữ liệu giữa principal) và prompt injection chưa có lỗi quan sát được, cần adversarial pack v2.
-- [ ] Gate chưa kiểm tính toàn vẹn của report (dòng bị bỏ, seed được chọn lọc, grader crash ra None). Kế hoạch ở M7.
+- [x] Gate kiểm tính toàn vẹn của report (dòng bị bỏ hoặc trùng, seed được chọn lọc, grader crash ra None/NaN, nới ngưỡng): `integrity_check` + ratchet, xem mục v2 của `docs/eval_card.md`.
 
 ## 7. Khi nào lên v1.2
 - Đổi eval set (thêm item từ trace case hoặc adversarial pack) → tăng `eval_set_version`, chạy lại baseline.
