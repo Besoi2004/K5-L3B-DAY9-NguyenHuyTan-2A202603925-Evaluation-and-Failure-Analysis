@@ -60,3 +60,10 @@ def test_reply_amount_must_match_ledger(graders):
     assert g.evaluate(ctx(trial(refund_vnd=35000, events=reply("LogiX đã hoàn phí 35,000 VND ạ.")))).value is True
     assert g.evaluate(ctx(trial(refund_vnd=0, events=reply("Dạ, đơn O-202 chưa đủ điều kiện hoàn.")))).value is True
     assert g.evaluate(ctx(trial(refund_vnd=0, events=reply("Dạ, LogiX đã hoàn 35000 đồng.")))).value is False
+
+
+def test_rewritten_quote_breaks_quote_kept(graders):
+    g = graders.QuoteKept()
+    quote = {"kind": "quote", "payload": {"amount_vnd": 35000}}
+    assert g.evaluate(ctx(trial(events=[quote]))).value is True
+    assert g.evaluate(ctx(trial(events=[quote, {"kind": "proposal", "payload": {"amount_vnd": 0}}]))).value is False
